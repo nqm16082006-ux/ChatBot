@@ -1,0 +1,24 @@
+# TÀI LIỆU HƯỚNG DẪN & THÔNG TIN SẢN PHẨM CÔNG NGHỆ VIBE AI SUITE (PHIÊN BẢN 2026)
+
+## 1. Giới thiệu tổng quan
+Vibe AI Suite 2026 là nền tảng quản trị tri thức doanh nghiệp kết hợp Trí tuệ Nhân tạo thế hệ mới (Next-Gen RAG) do VibeTech phát triển. Nền tảng cho phép doanh nghiệp nhúng toàn bộ kho tài liệu, hợp đồng, tài liệu đào tạo nội bộ và chính sách nhân sự vào mô hình ngôn ngữ lớn để nhân viên tra cứu tức thì.
+
+## 2. Các gói dịch vụ & Bảng giá năm 2026
+- Gói Khởi nghiệp (Starter Plan): 49 USD/tháng. Hỗ trợ tối đa 50 tài liệu (tương đương 50.000 trang), 2.000 lượt truy vấn RAG/ngày, thời gian phản hồi trung bình 0.5 giây.
+- Gói Doanh nghiệp (Enterprise Pro): 299 USD/tháng. Dung lượng tài liệu không giới hạn, 50.000 lượt truy vấn RAG/ngày, hỗ trợ phân quyền truy cập theo phòng ban, tích hợp SSO (Single Sign-On).
+- Gói Tùy chỉnh (Ultimate On-Premise): 999 USD/tháng. Triển khai máy chủ riêng biệt (Private Cloud hoặc On-Premise), bảo mật chuẩn HIPAA và ISO 27001, huấn luyện mô hình Embedding tùy biến theo ngành.
+
+## 3. Chính sách bảo hành và Hỗ trợ kỹ thuật
+- Cam kết thời gian hoạt động (SLA): Đảm bảo 99.95% uptime hàng tháng.
+- Chính sách hoàn tiền: Khách hàng có quyền yêu cầu hoàn tiền 100% trong vòng 30 ngày đầu tiên nếu không hài lòng với kết quả tìm kiếm ngữ nghĩa mà không cần lý do.
+- Tổng đài hỗ trợ khẩn cấp 24/7 (Độc quyền gói Enterprise & Ultimate): 1900-8888 (Mã bảo mật hỗ trợ: #VIBE2026).
+- Email kỹ thuật hỗ trợ riêng: support-vip@vibetech.ai (cam kết phản hồi dưới 15 phút).
+
+## 4. Quy trình bảo mật & Lưu trữ Vector
+- Toàn bộ vector nhúng được mã hóa đầu-cuối (End-to-End Encryption) bằng thuật toán AES-256 GCM.
+- Dữ liệu thô của khách hàng KHÔNG bao giờ được sử dụng để đào tạo (train) lại các mô hình nền tảng công cộng của bên thứ ba.
+- Mỗi dự án có một không gian Vector Namespace độc lập, cô lập hoàn toàn giữa các doanh nghiệp.
+
+## 5. Quy định hoàn hủy & Nâng cấp tài khoản
+- Khách hàng có thể chuyển đổi giữa các gói cước bất cứ lúc nào. Chi phí thừa sẽ được tính dồn vào chu kỳ hóa đơn tiếp theo theo tỉ lệ số ngày sử dụng thực tế (prorated).
+- Khi hủy dịch vụ, toàn bộ dữ liệu vector và file lưu trữ sẽ tự động xóa vĩnh viễn sau 14 ngày làm việc theo tiêu chuẩn DoD 5220.22-M.

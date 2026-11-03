@@ -1,0 +1,327 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Vibe RAG AI Studio | Trợ Lý Tri Thức Gemini Thế Hệ Mới</title>
+  <meta name="description" content="Hệ thống Chatbot AI ứng dụng công nghệ RAG nhúng tri thức doanh nghiệp kết hợp Google Gemini và Vector Search.">
+  
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+  
+  <!-- Font Awesome Icons -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+  
+  <!-- Marked.js for Markdown & Highlight.js for Code -->
+  <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/atom-one-dark.min.css">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
+
+  <!-- Main Style -->
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body class="dark-theme">
+  <!-- Glowing Ambient Background Canvas -->
+  <div class="ambient-glow glow-1"></div>
+  <div class="ambient-glow glow-2"></div>
+  <div class="ambient-glow glow-3"></div>
+
+  <div class="app-container">
+    
+    <!-- LEFT SIDEBAR: KNOWLEDGE BASE & CONFIG -->
+    <aside class="sidebar" id="sidebar">
+      <div class="sidebar-header">
+        <div class="brand">
+          <div class="brand-icon">
+            <i class="fa-solid fa-atom pulse-icon"></i>
+          </div>
+          <div class="brand-info">
+            <h2>Vibe RAG AI</h2>
+            <span class="badge-gemini">
+              <i class="fa-brands fa-google"></i> Gemini 3.1 & Embed 001
+            </span>
+          </div>
+        </div>
+        <button class="mobile-close-btn" id="closeSidebarBtn" title="Đóng menu">
+          <i class="fa-solid fa-xmark"></i>
+        </button>
+      </div>
+
+      <!-- System Status Card -->
+      <div class="status-card glass-panel">
+        <div class="status-row">
+          <div class="status-indicator online"></div>
+          <span class="status-label">Kết nối API:</span>
+          <span class="status-val" id="apiKeyStatus">Đang kiểm tra...</span>
+        </div>
+        <div class="stats-grid">
+          <div class="stat-item">
+            <span class="stat-number" id="docCount">0</span>
+            <span class="stat-desc">Tài liệu</span>
+          </div>
+          <div class="stat-item">
+            <span class="stat-number" id="chunkCount">0</span>
+            <span class="stat-desc">Vector Chunks</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Knowledge Ingestion Hub -->
+      <div class="section-title">
+        <i class="fa-solid fa-database"></i> Kho Tri Thức (Knowledge Base)
+      </div>
+
+      <!-- Upload Zone -->
+      <div class="upload-box glass-panel" id="dropZone">
+        <input type="file" id="fileInput" accept=".txt,.md,.pdf,.json,.csv" style="display:none;">
+        <div class="upload-content">
+          <i class="fa-solid fa-cloud-arrow-up upload-icon"></i>
+          <p class="upload-title">Kéo thả file vào đây hoặc <span>chọn file</span></p>
+          <span class="upload-hint">Hỗ trợ .TXT, .MD, .PDF, .JSON</span>
+        </div>
+      </div>
+
+      <!-- Action Buttons -->
+      <div class="action-buttons-row">
+        <button class="btn btn-secondary btn-sm" id="openPasteModalBtn">
+          <i class="fa-solid fa-file-pen"></i> Dán văn bản
+        </button>
+        <button class="btn btn-primary-outline btn-sm" id="loadSampleBtn">
+          <i class="fa-solid fa-wand-magic-sparkles"></i> Nạp mẫu 2026
+        </button>
+      </div>
+
+      <!-- Uploading / Embedding Progress Bar -->
+      <div class="progress-container glass-panel" id="progressContainer" style="display:none;">
+        <div class="progress-info">
+          <span id="progressText">Đang vector hóa tài liệu...</span>
+          <span id="progressPercent">0%</span>
+        </div>
+        <div class="progress-bar-bg">
+          <div class="progress-bar-fill" id="progressBar"></div>
+        </div>
+      </div>
+
+      <!-- Document List -->
+      <div class="doc-list-wrapper">
+        <div class="doc-list-header">
+          <span>Danh sách tài liệu đã nhúng</span>
+          <button class="btn-icon danger" id="clearAllDocsBtn" title="Xóa toàn bộ tri thức">
+            <i class="fa-solid fa-trash-can"></i>
+          </button>
+        </div>
+        <div class="doc-list" id="docList">
+          <div class="empty-docs-placeholder">
+            <i class="fa-regular fa-folder-open"></i>
+            <p>Chưa có tài liệu nào trong kho tri thức.<br>Hãy tải file hoặc bấm "Nạp mẫu 2026".</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- RAG Controls & Parameters -->
+      <div class="rag-controls glass-panel">
+        <div class="control-row">
+          <div class="control-info">
+            <span class="control-title">Kích hoạt RAG</span>
+            <span class="control-desc">Tìm kiếm ngữ nghĩa & trích xuất nguồn</span>
+          </div>
+          <label class="switch">
+            <input type="checkbox" id="toggleRAG" checked>
+            <span class="slider round"></span>
+          </label>
+        </div>
+        <div class="control-slider-group">
+          <div class="slider-header">
+            <span>Số đoạn trích xuất (Top-K):</span>
+            <strong id="topKVal">4 đoạn</strong>
+          </div>
+          <input type="range" id="topKInput" min="1" max="8" value="4" class="custom-range">
+        </div>
+      </div>
+
+    </aside>
+
+    <!-- MAIN CHAT PANEL -->
+    <main class="chat-viewport">
+      
+      <!-- Top Navbar -->
+      <header class="chat-header glass-panel">
+        <div class="header-left">
+          <button class="sidebar-toggle-btn" id="openSidebarBtn">
+            <i class="fa-solid fa-bars-staggered"></i>
+          </button>
+          <div class="header-title">
+            <h1>Chatbot RAG AI <span class="tag-pro">Pro</span></h1>
+            <p class="subtitle" id="activeModelBadge">
+              <span class="dot-live"></span> Đang chạy với Gemini Flash & Vector Store
+            </p>
+          </div>
+        </div>
+        <div class="header-actions">
+          <button class="btn btn-ghost btn-sm" id="clearChatBtn" title="Làm mới đoạn hội thoại">
+            <i class="fa-solid fa-rotate-right"></i> Làm mới
+          </button>
+          <button class="btn btn-ghost btn-sm" id="openSettingsModalBtn" title="Cài đặt API">
+            <i class="fa-solid fa-gear"></i>
+          </button>
+        </div>
+      </header>
+
+      <!-- Chat Messages Scroll Area -->
+      <div class="messages-container" id="messagesContainer">
+        
+        <!-- Welcome Hero View (hidden once conversation starts) -->
+        <div class="welcome-hero" id="welcomeHero">
+          <div class="hero-icon-container">
+            <i class="fa-solid fa-brain glow-icon"></i>
+          </div>
+          <h2>Hệ Thống Trợ Lý AI RAG Chuyên Sâu</h2>
+          <p class="hero-desc">
+            Đặt bất kỳ câu hỏi nào. AI sẽ kết hợp giữa kho dữ liệu tri thức nội bộ và khả năng suy luận mạnh mẽ của Google Gemini.
+          </p>
+
+          <div class="prompt-grid">
+            <div class="prompt-card glass-card" data-prompt="Các gói dịch vụ và bảng giá năm 2026 của Vibe AI Suite như thế nào?">
+              <div class="prompt-card-icon"><i class="fa-solid fa-tag"></i></div>
+              <div class="prompt-card-content">
+                <strong>Bảng giá dịch vụ 2026</strong>
+                <span>Các gói cước, tính năng và chi phí chi tiết</span>
+              </div>
+            </div>
+
+            <div class="prompt-card glass-card" data-prompt="Chính sách bảo hành, hoàn tiền và cam kết SLA của Vibe AI ra sao?">
+              <div class="prompt-card-icon"><i class="fa-solid fa-shield-halved"></i></div>
+              <div class="prompt-card-content">
+                <strong>Chính sách & Hoàn tiền</strong>
+                <span>Cam kết SLA 99.95% và hoàn tiền 30 ngày</span>
+              </div>
+            </div>
+
+            <div class="prompt-card glass-card" data-prompt="Số hotline hỗ trợ khẩn cấp 24/7 và email tiếp nhận kỹ thuật là gì?">
+              <div class="prompt-card-icon"><i class="fa-solid fa-headset"></i></div>
+              <div class="prompt-card-content">
+                <strong>Liên hệ hỗ trợ 24/7</strong>
+                <span>Số điện thoại tổng đài VIP và email hỗ trợ</span>
+              </div>
+            </div>
+
+            <div class="prompt-card glass-card" data-prompt="Giải thích cơ chế bảo mật và lưu trữ Vector của hệ thống?">
+              <div class="prompt-card-icon"><i class="fa-solid fa-lock"></i></div>
+              <div class="prompt-card-content">
+                <strong>Bảo mật Vector RAG</strong>
+                <span>Mã hóa AES-256 và bảo mật dữ liệu tri thức</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Chat Stream Target -->
+        <div class="message-feed" id="messageFeed"></div>
+
+      </div>
+
+      <!-- Chat Input Dock -->
+      <div class="chat-input-dock">
+        <div class="input-glass-container glass-panel">
+          <div class="input-indicator" id="inputRagBadge">
+            <i class="fa-solid fa-bolt"></i> RAG Bật
+          </div>
+          <textarea 
+            id="chatInput" 
+            placeholder="Hỏi bất kỳ điều gì về tài liệu đã nhúng... (Enter để gửi, Shift+Enter xuống dòng)" 
+            rows="1"
+          ></textarea>
+          <button class="send-btn" id="sendBtn" title="Gửi câu hỏi">
+            <i class="fa-solid fa-paper-plane"></i>
+          </button>
+        </div>
+        <div class="input-footer-hint">
+          <span>Công nghệ RAG tự động truy xuất tài liệu và trích dẫn nguồn theo thời gian thực.</span>
+        </div>
+      </div>
+
+    </main>
+  </div>
+
+  <!-- MODAL: DÁN VĂN BẢN TRỰC TIẾP -->
+  <div class="modal-overlay" id="pasteModal" style="display:none;">
+    <div class="modal-card glass-panel">
+      <div class="modal-header">
+        <h3><i class="fa-solid fa-file-pen"></i> Thêm Văn Bản Vào Kho Tri Thức</h3>
+        <button class="btn-icon" id="closePasteModalBtn"><i class="fa-solid fa-xmark"></i></button>
+      </div>
+      <div class="modal-body">
+        <div class="form-group">
+          <label>Tên tài liệu / Tiêu đề:</label>
+          <input type="text" id="pasteTitle" placeholder="Ví dụ: Quy định nhân sự 2026, Hướng dẫn sử dụng..." class="custom-input">
+        </div>
+        <div class="form-group">
+          <label>Nội dung văn bản:</label>
+          <textarea id="pasteContent" rows="8" placeholder="Dán nội dung bài viết, tài liệu, chính sách cần AI học vào đây..." class="custom-textarea"></textarea>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-secondary" id="cancelPasteBtn">Hủy</button>
+        <button class="btn btn-primary" id="submitPasteBtn">
+          <i class="fa-solid fa-vector-square"></i> Nhúng vào Vector DB
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- MODAL: CÀI ĐẶT API & MÔ HÌNH -->
+  <div class="modal-overlay" id="settingsModal" style="display:none;">
+    <div class="modal-card glass-panel">
+      <div class="modal-header">
+        <h3><i class="fa-solid fa-gear"></i> Cấu Hình Gemini & RAG</h3>
+        <button class="btn-icon" id="closeSettingsModalBtn"><i class="fa-solid fa-xmark"></i></button>
+      </div>
+      <div class="modal-body">
+        <div class="form-group">
+          <label>Google Gemini API Key:</label>
+          <input type="password" id="settingsApiKey" placeholder="Nhập API key mới..." class="custom-input">
+          <span class="field-hint">Key hiện tại đã được cấu hình trong file .env an toàn.</span>
+        </div>
+        <div class="form-group">
+          <label>Mô hình sinh câu trả lời (LLM):</label>
+          <select id="settingsGenModel" class="custom-select">
+            <option value="gemini-3.1-flash-lite" selected>gemini-3.1-flash-lite (Mới nhất, siêu nhanh & chính xác)</option>
+            <option value="gemini-3.5-flash-lite">gemini-3.5-flash-lite (Dung lượng lớn)</option>
+            <option value="gemini-flash-lite-latest">gemini-flash-lite-latest (Tự động cập nhật)</option>
+            <option value="gemini-3.8-flash">gemini-3.8-flash</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label>Mô hình nhúng Vector (Embedding):</label>
+          <input type="text" value="gemini-embedding-001 (Vector 3072 dims)" disabled class="custom-input disabled">
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-secondary" id="cancelSettingsBtn">Đóng</button>
+        <button class="btn btn-primary" id="saveSettingsBtn">Lưu Cấu Hình</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- MODAL: XEM CHI TIẾT ĐOẠN TRÍCH NGUỒN (SOURCE INSPECTOR) -->
+  <div class="modal-overlay" id="sourceModal" style="display:none;">
+    <div class="modal-card glass-panel modal-lg">
+      <div class="modal-header">
+        <h3 id="sourceModalTitle"><i class="fa-solid fa-book-open"></i> Chi Tiết Đoạn Trích Tri Thức</h3>
+        <button class="btn-icon" id="closeSourceModalBtn"><i class="fa-solid fa-xmark"></i></button>
+      </div>
+      <div class="modal-body" id="sourceModalBody">
+        <!-- Injected dynamically -->
+      </div>
+    </div>
+  </div>
+
+  <!-- Toast Notification -->
+  <div class="toast-container" id="toastContainer"></div>
+
+  <!-- Frontend JS Modules -->
+  <script src="js/app.js"></script>
+</body>
+</html>
